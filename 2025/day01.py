@@ -78,7 +78,7 @@ class Test(unittest.TestCase):
         self.assertEqual(solution(input), 3)
 
     def test_solution_part1_real(self):
-        with open("day1_input.txt", "r") as file:
+        with open("inputs/day01.txt", "r") as file:
             input = file.readlines()
         self.assertEqual(solution(input), 1089)
 
@@ -106,7 +106,7 @@ class Test(unittest.TestCase):
         self.assertEqual(solution(input, count_passes=True), 6)
 
     def test_solution_part2_real(self):
-        with open("day1_input.txt", "r") as file:
+        with open("inputs/day01.txt", "r") as file:
             input = file.readlines()
         # NOT 6536. This happens if the solution incorrectly accounts observes
         # a passed zero when _starting at 0 and going left_.
