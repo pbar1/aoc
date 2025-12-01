@@ -100,7 +100,7 @@ class Test(unittest.TestCase):
     def test_solution_part2_real(self):
         with open("day1_input.txt", "r+") as file:
             input = file.readlines()
-        self.assertEqual(solution(input, count_clicks=True), -1)  # not 6536
+        self.assertEqual(solution(input, count_clicks=True), 6530)  # not 6536
 
 
 if __name__ == "__main__":
