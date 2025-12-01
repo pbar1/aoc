@@ -2,47 +2,55 @@ import unittest
 from typing import List, Tuple
 
 
-def parse_rotation(rotation: str) -> Tuple[bool, int]:
-    direction = rotation[:1] == "L"
-    magnitude = int(rotation[1:])
-    return (direction, magnitude)
+def parse_turn(instruction: str) -> int:
+    magnitude = int(instruction[1:])
+    if instruction[0] == "L":
+        return -magnitude
+    else:
+        return magnitude
 
 
-def turn(dial: int, left: bool, magnitude: int, size: int = 100) -> Tuple[int, int]:
-    passed_zero = 0
+def turn(dial: int, delta: int, size: int = 100) -> Tuple[int, int]:
+    """
+    Simulates an actual hand turning the dial of a lock left or right.
+    """
 
-    for _ in range(0, magnitude):
+    zeroes = 0
+    left = delta < 0
+
+    for _ in range(0, abs(delta)):
         if left:
             dial -= 1
         else:
             dial += 1
 
+        # dial has wrapped around
         if dial == -1:
             dial = size - 1
         elif dial == size:
             dial = 0
 
         if dial == 0:
-            passed_zero += 1
+            zeroes += 1
 
     # dial landing on zero is not a "pass" and gets counted later
     if dial == 0:
-        passed_zero -= 1
+        zeroes -= 1
 
-    return (dial, passed_zero)
+    return dial, zeroes
 
 
-def solution(input: List[str], dial: int = 50, count_clicks: bool = False) -> int:
+def solution(input: List[str], dial: int = 50, count_passes: bool = False) -> int:
     zero_counter = 0
 
     for item in input:
-        left, magnitude = parse_rotation(item)
-        dial, passed_zero = turn(dial, left, magnitude)
+        delta = parse_turn(item)
+        dial, zeroes = turn(dial, delta)
 
         if dial == 0:
             zero_counter += 1
-        if count_clicks:
-            zero_counter += passed_zero
+        if count_passes:
+            zero_counter += zeroes
 
     return zero_counter
 
@@ -62,15 +70,15 @@ class Test(unittest.TestCase):
     ]
 
     def test_parse_rotation(self):
-        self.assertEqual(parse_rotation("L1"), (True, 1))
-        self.assertEqual(parse_rotation("R99"), (False, 99))
+        self.assertEqual(parse_turn("L1"), -1)
+        self.assertEqual(parse_turn("R99"), 99)
 
     def test_solution_part1_example(self):
         input = self.example_input
         self.assertEqual(solution(input), 3)
 
     def test_solution_part1_real(self):
-        with open("day1_input.txt", "r+") as file:
+        with open("day1_input.txt", "r") as file:
             input = file.readlines()
         self.assertEqual(solution(input), 1089)
 
@@ -79,7 +87,7 @@ class Test(unittest.TestCase):
             "R1000",
             "L1000",
         ]
-        self.assertEqual(solution(input, count_clicks=True), 20)
+        self.assertEqual(solution(input, count_passes=True), 20)
 
     def test_solution_part2_custom(self):
         input = [
@@ -91,16 +99,18 @@ class Test(unittest.TestCase):
             "R1",  # 0 + 1 -> 1, zeroes = 6
             "L101",  # 1 - 101 -> 0, zeroes = 8
         ]
-        self.assertEqual(solution(input, count_clicks=True), 8)
+        self.assertEqual(solution(input, count_passes=True), 8)
 
     def test_solution_part2_example(self):
         input = self.example_input
-        self.assertEqual(solution(input, count_clicks=True), 6)
+        self.assertEqual(solution(input, count_passes=True), 6)
 
     def test_solution_part2_real(self):
-        with open("day1_input.txt", "r+") as file:
+        with open("day1_input.txt", "r") as file:
             input = file.readlines()
-        self.assertEqual(solution(input, count_clicks=True), 6530)  # not 6536
+        # NOT 6536. This happens if the solution incorrectly accounts observes
+        # a passed zero when _starting at 0 and going left_.
+        self.assertEqual(solution(input, count_passes=True), 6530)
 
 
 if __name__ == "__main__":
