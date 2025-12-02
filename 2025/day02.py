@@ -1,5 +1,5 @@
 import unittest
-from functools import cache
+from functools import cache, reduce
 from math import isqrt
 from typing import Generator, List, Set, Tuple
 
@@ -31,20 +31,19 @@ def chunkstr(s: str, size: int) -> Generator[str, None, None]:
         yield s[i : i + size]
 
 
-def solution(input: List[Tuple[str, str]]) -> int:
+def solution_part1(input: List[Tuple[str, str]]) -> int:
     total = 0
 
     for first, last in input:
         for id in range(int(first), int(last) + 1):
             s = str(id)
-            a, b = s[: len(s) // 2], s[len(s) // 2 :]
-            if a == b:
+            if s[: len(s) // 2] == s[len(s) // 2 :]:
                 total += id
 
     return total
 
 
-def solution2(input: List[Tuple[str, str]]) -> int:
+def solution_part2(input: List[Tuple[str, str]]) -> int:
     total = 0
 
     for first, last in input:
@@ -54,7 +53,6 @@ def solution2(input: List[Tuple[str, str]]) -> int:
             for divisor in divisors:
                 chunks = set(chunkstr(s, divisor))
                 if len(chunks) == 1:
-                    print(s, divisor, chunks)
                     total += id
                     break
 
@@ -86,24 +84,23 @@ class Test(unittest.TestCase):
 
     def test_part1_example(self):
         input = parse_id_ranges(self.example_input)
-        self.assertEqual(solution(input), 1227775554)
+        self.assertEqual(solution_part1(input), 1227775554)
 
     def test_part1_real(self):
         with open("inputs/day02.txt", "r") as file:
             real_input = file.read()
         input = parse_id_ranges(real_input)
-        self.assertEqual(solution(input), 18893502033)
+        self.assertEqual(solution_part1(input), 18893502033)
 
     def test_part2_example(self):
         input = parse_id_ranges(self.example_input)
-        self.assertEqual(solution2(input), 4174379265)
+        self.assertEqual(solution_part2(input), 4174379265)
 
     def test_part2_real(self):
         with open("inputs/day02.txt", "r") as file:
             real_input = file.read()
         input = parse_id_ranges(real_input)
-        # TODO: Using -1 as a placeholder
-        self.assertEqual(solution(input), -1)  # 18893502033 is too low
+        self.assertEqual(solution_part2(input), 26202168557)
 
 
 if __name__ == "__main__":
