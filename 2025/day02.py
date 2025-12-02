@@ -1,5 +1,5 @@
 import unittest
-from functools import cache, reduce
+from functools import cache
 from math import isqrt
 from typing import Generator, List, Set, Tuple
 
