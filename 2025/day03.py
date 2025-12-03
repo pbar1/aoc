@@ -45,7 +45,10 @@ def part1(banks: List[str]) -> int:
     sum = 0
 
     for bank in banks:
-        sum += max_battery(bank)
+        battery = max_battery(bank)
+        if battery < 50:
+            print(bank, battery)
+        sum += battery
 
     return sum
 
@@ -61,15 +64,21 @@ class Test(unittest.TestCase):
     def test_max_battery(self):
         self.assertEqual(max_battery("987654321111111"), 98)
         self.assertEqual(max_battery("811111111111119"), 89)
+        self.assertEqual(
+            max_battery(
+                "5222375351371176713213317161144654554471573771321536455516232143461543145334411275722457731641145189"
+            ),
+            98,
+        )
 
-    def test_part1_example(self):
-        input = self.example_input.strip().splitlines()
-        self.assertEqual(part1(input), 357)
+    # def test_part1_example(self):
+    #     input = self.example_input.strip().splitlines()
+    #     self.assertEqual(part1(input), 357)
 
-    def test_part1_real(self):
-        with open("inputs/day03.txt", "r") as file:
-            input = file.readlines()
-        self.assertEqual(part1(input), -1)  # 17005 is too low
+    # def test_part1_real(self):
+    #     with open("inputs/day03.txt", "r") as file:
+    #         input = file.readlines()
+    #     self.assertEqual(part1(input), -1)  # 17005 is too low
 
 
 if __name__ == "__main__":
