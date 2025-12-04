@@ -17,52 +17,18 @@ def occupied(grid: list[list[bool]], x: int, y: int) -> bool:
     return grid[y][x]
 
 
-def accessible_rolls(grid: list[list[bool]]) -> int:
-    total = 0
-
-    print()
-    for y, row in enumerate(grid):
-        for x, cell in enumerate(row):
-            # empty cell never counts toward total
-            if not cell:
-                print(".", end="")
-                continue
-
-            checks = [
-                (x - 1, y - 1),
-                (x, y - 1),
-                (x + 1, y - 1),
-                (x - 1, y),
-                (x + 1, y),
-                (x - 1, y + 1),
-                (x, y + 1),
-                (x + 1, y + 1),
-            ]
-            adjacent_occupied = 0
-            for adj_x, adj_y in checks:
-                if occupied(grid, adj_x, adj_y):
-                    adjacent_occupied += 1
-            if adjacent_occupied < 4:
-                total += 1
-            print(f"{'x' if adjacent_occupied < 4 else '@'}", end="")
-        print()
-
-    return total
-
-
-def removable_rolls(grid: list[list[bool]]) -> int:
+def removable_rolls(grid: list[list[bool]], mutate: bool) -> int:
     total = 0
 
     while True:
         removed_queue = 0
-        print()
+        # print()
         for y, row in enumerate(grid):
             for x, cell in enumerate(row):
                 # empty cell never counts toward total
                 if not cell:
-                    print(".", end="")
+                    # print(".", end="")
                     continue
-
                 checks = [
                     (x - 1, y - 1),
                     (x, y - 1),
@@ -78,14 +44,15 @@ def removable_rolls(grid: list[list[bool]]) -> int:
                     if occupied(grid, adj_x, adj_y):
                         adjacent_occupied += 1
                 if adjacent_occupied < 4:
-                    # remove the roll
-                    grid[y][x] = False
+                    if mutate:
+                        # remove the roll
+                        grid[y][x] = False
                     removed_queue += 1
-                print(f"{'x' if adjacent_occupied < 4 else '@'}", end="")
-            print()
-        if removed_queue == 0:
-            break
+                # print(f"{'x' if adjacent_occupied < 4 else '@'}", end="")
+            # print()
         total += removed_queue
+        if removed_queue == 0 or not mutate:
+            break
 
     return total
 
@@ -112,23 +79,23 @@ class Test(unittest.TestCase):
 
     def test_part1_example(self):
         grid = parse_grid(self.example)
-        self.assertEqual(accessible_rolls(grid), 13)
+        self.assertEqual(removable_rolls(grid, mutate=False), 13)
 
     def test_part1_real(self):
         with open("inputs/day04.txt", "r") as file:
             input = file.read().strip()
         grid = parse_grid(input)
-        self.assertEqual(accessible_rolls(grid), 1363)
+        self.assertEqual(removable_rolls(grid, mutate=False), 1363)
 
     def test_part2_example(self):
         grid = parse_grid(self.example)
-        self.assertEqual(removable_rolls(grid), 43)
+        self.assertEqual(removable_rolls(grid, mutate=True), 43)
 
     def test_part2_real(self):
         with open("inputs/day04.txt", "r") as file:
             input = file.read().strip()
         grid = parse_grid(input)
-        self.assertEqual(removable_rolls(grid), 8184)
+        self.assertEqual(removable_rolls(grid, mutate=True), 8184)
 
 
 if __name__ == "__main__":
