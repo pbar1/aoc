@@ -17,16 +17,17 @@ def occupied(grid: list[list[bool]], x: int, y: int) -> bool:
     return grid[y][x]
 
 
-def removable_rolls(grid: list[list[bool]], mutate: bool) -> int:
+# Uncomment the `print` statements to display successive iterations of the
+# ascii text grid for debugging
+def removable_rolls(grid: list[list[bool]], actually_remove: bool) -> int:
     total = 0
 
     while True:
         removed_queue = 0
         # print()
         for y, row in enumerate(grid):
-            for x, cell in enumerate(row):
-                # empty cell never counts toward total
-                if not cell:
+            for x, cell_occupied in enumerate(row):
+                if not cell_occupied:
                     # print(".", end="")
                     continue
                 checks = [
@@ -44,14 +45,13 @@ def removable_rolls(grid: list[list[bool]], mutate: bool) -> int:
                     if occupied(grid, adj_x, adj_y):
                         adjacent_occupied += 1
                 if adjacent_occupied < 4:
-                    if mutate:
-                        # remove the roll
+                    if actually_remove:
                         grid[y][x] = False
                     removed_queue += 1
                 # print(f"{'x' if adjacent_occupied < 4 else '@'}", end="")
             # print()
         total += removed_queue
-        if removed_queue == 0 or not mutate:
+        if removed_queue == 0 or not actually_remove:
             break
 
     return total
@@ -79,23 +79,23 @@ class Test(unittest.TestCase):
 
     def test_part1_example(self):
         grid = parse_grid(self.example)
-        self.assertEqual(removable_rolls(grid, mutate=False), 13)
+        self.assertEqual(removable_rolls(grid, actually_remove=False), 13)
 
     def test_part1_real(self):
         with open("inputs/day04.txt", "r") as file:
             input = file.read().strip()
         grid = parse_grid(input)
-        self.assertEqual(removable_rolls(grid, mutate=False), 1363)
+        self.assertEqual(removable_rolls(grid, actually_remove=False), 1363)
 
     def test_part2_example(self):
         grid = parse_grid(self.example)
-        self.assertEqual(removable_rolls(grid, mutate=True), 43)
+        self.assertEqual(removable_rolls(grid, actually_remove=True), 43)
 
     def test_part2_real(self):
         with open("inputs/day04.txt", "r") as file:
             input = file.read().strip()
         grid = parse_grid(input)
-        self.assertEqual(removable_rolls(grid, mutate=True), 8184)
+        self.assertEqual(removable_rolls(grid, actually_remove=True), 8184)
 
 
 if __name__ == "__main__":
