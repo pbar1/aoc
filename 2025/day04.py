@@ -11,8 +11,47 @@ def parse_grid(input: str) -> list[list[bool]]:
     return y
 
 
-def solution(input: list[list[str]]) -> int:
-    return -1
+def occupied(grid: list[list[bool]], x: int, y: int) -> bool:
+    try:
+        cell = grid[y][x]
+    except IndexError:
+        return False
+    return cell
+
+
+def solution(grid: list[list[bool]]) -> int:
+    total = 0
+
+    print()
+    for y, row in enumerate(grid):
+        for x, cell in enumerate(row):
+            # empty cell never counts toward total
+            if not cell:
+                print(".", end="")
+                continue
+            # (x-1, y-1) | (x  , y-1) | (x+1, y-1)
+            # (x-1, y  ) |            | (x+1, y  )
+            # (x-1, y+1) | (x  , y+1) | (x+1, y+1)
+            checks = [
+                (x - 1, y - 1),
+                (x, y - 1),
+                (x + 1, y - 1),
+                (x - 1, y),
+                (x + 1, y),
+                (x - 1, y + 1),
+                (x, y + 1),
+                (x + 1, y + 1),
+            ]
+            adjacent_free = 0
+            for adj_x, adj_y in checks:
+                if not occupied(grid, adj_x, adj_y):
+                    adjacent_free += 1
+            if adjacent_free < 4:
+                total += 1
+            print(f"{'x' if adjacent_free < 4 else '@'}", end="")
+        print()
+
+    return total
 
 
 class Test(unittest.TestCase):
@@ -35,8 +74,9 @@ class Test(unittest.TestCase):
             [[False, False], [True, True]],
         )
 
-    # def test_part1_example(self):
-    #     self.assertEqual(solution())
+    def test_part1_example(self):
+        grid = parse_grid(self.example)
+        self.assertEqual(solution(grid), 13)
 
 
 if __name__ == "__main__":
