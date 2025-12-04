@@ -50,7 +50,7 @@ def accessible_rolls(grid: list[list[bool]]) -> int:
     return total
 
 
-def removable_rolls(grid: list[list[bool]], keep_going: bool) -> int:
+def removable_rolls(grid: list[list[bool]]) -> int:
     total = 0
 
     while True:
@@ -83,7 +83,7 @@ def removable_rolls(grid: list[list[bool]], keep_going: bool) -> int:
                     removed_queue += 1
                 print(f"{'x' if adjacent_occupied < 4 else '@'}", end="")
             print()
-        if removed_queue == 0 or not keep_going:
+        if removed_queue == 0:
             break
         total += removed_queue
 
@@ -122,13 +122,13 @@ class Test(unittest.TestCase):
 
     def test_part2_example(self):
         grid = parse_grid(self.example)
-        self.assertEqual(removable_rolls(grid, keep_going=True), 43)
+        self.assertEqual(removable_rolls(grid), 43)
 
-    # def test_part2_real(self):
-    #     with open("inputs/day04.txt", "r") as file:
-    #         input = file.read().strip()
-    #     grid = parse_grid(input)
-    #     self.assertEqual(removable_rolls(grid), -1)
+    def test_part2_real(self):
+        with open("inputs/day04.txt", "r") as file:
+            input = file.read().strip()
+        grid = parse_grid(input)
+        self.assertEqual(removable_rolls(grid), 8184)
 
 
 if __name__ == "__main__":
