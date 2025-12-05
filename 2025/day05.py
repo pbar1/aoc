@@ -23,7 +23,15 @@ def parse_input(input: str) -> Ingredients:
 
 
 def solution(ingredients: Ingredients) -> int:
-    return -1
+    fresh_total = 0
+
+    for candidate in ingredients.available_ids:
+        for start, end in ingredients.fresh_id_ranges:
+            if start <= candidate <= end:
+                fresh_total += 1
+                break
+
+    return fresh_total
 
 
 class Test(unittest.TestCase):
@@ -52,7 +60,8 @@ class Test(unittest.TestCase):
         self.assertEqual(solution(ingredients), 3)
 
     def test_part1_real(self):
-        ingredients = parse_input(open("inputs/day05.txt").read().strip())
+        with open("inputs/day05.txt") as file:
+            ingredients = parse_input(file.read().strip())
         self.assertEqual(solution(ingredients), -1)
 
 
