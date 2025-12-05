@@ -34,6 +34,28 @@ def solution(ingredients: Ingredients) -> int:
     return fresh_total
 
 
+def solution2(ingredients: Ingredients) -> int:
+    # if ranges are sorted, then they're already "soft merged"
+    ingredients.fresh_id_ranges.sort(key=lambda r: r[0])
+
+    ranges: List[Tuple[int, int]] = []
+    for start, end in ingredients.fresh_id_ranges:
+        # current start does not overlap with previous end
+        if len(ranges) == 0 or ranges[-1][1] < start:
+            ranges.append((start, end))
+            continue
+        # overlap, so merge
+        prev_start, prev_end = ranges[-1][0], ranges[-1][1]
+        ranges[-1] = min(prev_start, start), max(prev_end, end)
+
+    # now we only have unique ranges - count their contents
+    total = 0
+    for start, end in ranges:
+        total += end - start + 1
+
+    return total
+
+
 class Test(unittest.TestCase):
     example = """
 3-5
@@ -62,7 +84,16 @@ class Test(unittest.TestCase):
     def test_part1_real(self):
         with open("inputs/day05.txt") as file:
             ingredients = parse_input(file.read().strip())
-        self.assertEqual(solution(ingredients), -1)
+        self.assertEqual(solution(ingredients), 744)
+
+    def test_part2_example(self):
+        ingredients = parse_input(self.example)
+        self.assertEqual(solution2(ingredients), 14)
+
+    def test_part2_real(self):
+        with open("inputs/day05.txt") as file:
+            ingredients = parse_input(file.read().strip())
+        self.assertEqual(solution2(ingredients), 347468726696961)
 
 
 if __name__ == "__main__":
