@@ -22,6 +22,10 @@ def parse_input(input: str) -> Ingredients:
     return Ingredients(fresh_id_ranges, available_ids)
 
 
+def solution(ingredients: Ingredients) -> int:
+    return -1
+
+
 class Test(unittest.TestCase):
     example = """
 3-5
@@ -42,6 +46,14 @@ class Test(unittest.TestCase):
             parse_input(self.example),
             Ingredients([(3, 5), (10, 14), (16, 20), (12, 18)], [1, 5, 8, 11, 17, 32]),
         )
+
+    def test_part1_example(self):
+        ingredients = parse_input(self.example)
+        self.assertEqual(solution(ingredients), 3)
+
+    def test_part1_real(self):
+        ingredients = parse_input(open("inputs/day05.txt").read().strip())
+        self.assertEqual(solution(ingredients), -1)
 
 
 if __name__ == "__main__":
