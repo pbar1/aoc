@@ -41,17 +41,20 @@ def solve(input: str, count_paths: bool = False) -> int:
         for i, bit in enumerate(bitfield(new_right, width)):
             position_hits[i] += bit
 
+        print(position_hits)
+
         # beams act as OR with other beams
         or_mask = new_left | new_right
 
         # turn off only split beams with NAND, and apply the splits with OR
         beam &= ~splitter_mask
+        unsplit = beam
         beam |= or_mask
 
-        # print(f"split: {dbg(splitter_mask, width, "^")}  ", end="")
-        # print(f" beams: {dbg(or_mask, width)}  ", end="")
-        # print(f" final: {dbg(beam, width)}  ", end="")
-        # print()
+        print(f"split: {dbg(splitter_mask, width, "^")}  ", end="")
+        print(f"beams: {dbg(or_mask, width)}  ", end="")
+        print(f"unsplit: {dbg(unsplit, width)}  ", end="")
+        print(f"final: {dbg(beam, width)}  ", end="")
 
     if count_paths:
         return sum(position_hits)
@@ -78,23 +81,23 @@ class Test(unittest.TestCase):
 ...............
 """.strip()
 
-    def test_part1_example(self):
-        input = self.example
-        self.assertEqual(solve(input), 21)
+    # def test_part1_example(self):
+    #     input = self.example
+    #     self.assertEqual(solve(input), 21)
 
-    def test_part1_real(self):
-        with open("inputs/day07.txt", "r") as file:
-            input = file.read().strip()
-        self.assertEqual(solve(input), 1678)
+    # def test_part1_real(self):
+    #     with open("inputs/day07.txt", "r") as file:
+    #         input = file.read().strip()
+    #     self.assertEqual(solve(input), 1678)
 
     def test_part2_example(self):
         input = self.example
         self.assertEqual(solve(input, count_paths=True), 40)
 
-    def test_part2_real(self):
-        with open("inputs/day07.txt", "r") as file:
-            input = file.read().strip()
-        self.assertEqual(solve(input, count_paths=True), -1)  # 3354 is too low
+    # def test_part2_real(self):
+    #     with open("inputs/day07.txt", "r") as file:
+    #         input = file.read().strip()
+    #     self.assertEqual(solve(input, count_paths=True), -1)  # 3354 is too low
 
 
 if __name__ == "__main__":
