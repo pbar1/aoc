@@ -58,10 +58,11 @@ def solve(input: str, count_paths: bool = False) -> int:
 
             total_paths = new_paths
 
-        # print(f"split: {dbg(splitter_mask, width, "^")}  ", end="")
-        # print(f"beams: {dbg(or_mask, width)}  ", end="")
+        # print(f"splitters: {dbg(splitters, width, "^")}  ", end="")
         # print(f"unsplit: {dbg(unsplit, width)}  ", end="")
         # print(f"final: {dbg(beam, width)}  ", end="")
+        # print(total_paths, end="")
+        # print()
 
     if count_paths:
         return sum(total_paths)
