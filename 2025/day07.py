@@ -86,6 +86,11 @@ class Test(unittest.TestCase):
         input = self.example
         self.assertEqual(part1(input), 21)
 
+    def test_part1_real(self):
+        with open("inputs/day07.txt", "r") as file:
+            input = file.read().strip()
+        self.assertEqual(part1(input), 1678)
+
 
 if __name__ == "__main__":
     unittest.main()
