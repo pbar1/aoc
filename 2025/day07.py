@@ -1,8 +1,7 @@
-import re
 import unittest
 
 
-def dbg(input: int, char: str = "|", size: int = 15) -> str:
+def dbg(input: int, size: int, char: str = "|") -> str:
     return f"{input:>0{size}b}".replace("0", ".").replace("1", char)
 
 
@@ -12,14 +11,12 @@ def part1(input: str) -> int:
     input = input.replace("S", "1")
 
     lines = input.splitlines()
-    start = lines.pop(0)
 
-    # print(start)
-    # print()
-
-    beam = int(start, 2)
+    beam = int(lines.pop(0), 2)
+    width = len(lines[0])
 
     splits = 0
+    position_hits = [0] * width
 
     for line in lines:
         # splitters act as XOR on the beam index
@@ -40,9 +37,10 @@ def part1(input: str) -> int:
         beam &= ~splitter_mask
         beam |= or_mask
 
-        print(
-            f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam)}"
-        )
+        print(f"split: {dbg(splitter_mask, width, "^")}  ", end="")
+        print(f" beams: {dbg(or_mask, width)}  ", end="")
+        print(f" final: {dbg(beam, width)}  ", end="")
+        print()
 
     return splits
 
