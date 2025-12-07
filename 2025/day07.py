@@ -17,7 +17,7 @@ def part1(input: str) -> int:
     # print(start)
     # print()
 
-    beam_bits = int(start, 2)
+    beam = int(start, 2)
 
     splits = 0
 
@@ -34,24 +34,24 @@ def part1(input: str) -> int:
 
         # simulate what would happen if the splitter was always applied, ie
         # with XOR, and save it for later without mutating the input
-        unused = beam_bits ^ splitter_mask
+        unused = beam ^ splitter_mask
         unused |= or_mask
 
         # apply the actual logic by turing off incoming beams with AND-NOT,
         # which is slightly different from XOR by being path-dependent instead
         # of commutative
-        beam_bits &= ~splitter_mask
-        beam_bits |= or_mask
+        beam &= ~splitter_mask
+        beam |= or_mask
 
         # find the difference between the XOR and AND-NOT results, which are
         # the unused splitters
-        unused ^= beam_bits
+        unused ^= beam
 
         # count the total splitters - unused splitters
         splits += splitter_mask.bit_count() - unused.bit_count()
 
         print(
-            f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam_bits)}  unused: {dbg(unused)}"
+            f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam)}  unused: {dbg(unused)}"
         )
 
     return splits
