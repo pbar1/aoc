@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
     def test_part1_real(self):
         with open("inputs/day06.txt", "r") as file:
             input = file.read().strip()
-        self.assertEqual(part1(input), -1)
+        self.assertEqual(part1(input), 6417439773370)
 
 
 if __name__ == "__main__":
