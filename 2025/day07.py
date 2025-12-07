@@ -25,6 +25,10 @@ def part1(input: str) -> int:
         # splitters act as XOR on the beam index
         splitter_mask = int(line, 2)
 
+        # find the active splitters and count only them
+        splitter_mask &= beam
+        splits += splitter_mask.bit_count()
+
         # find positions of the new paths of the beam
         new_left = splitter_mask << 1
         new_right = splitter_mask >> 1
@@ -32,26 +36,12 @@ def part1(input: str) -> int:
         # beams act as OR with other beams
         or_mask = new_left | new_right
 
-        # simulate what would happen if the splitter was always applied, ie
-        # with XOR, and save it for later without mutating the input
-        unused = beam ^ splitter_mask
-        unused |= or_mask
-
-        # apply the actual logic by turing off incoming beams with AND-NOT,
-        # which is slightly different from XOR by being path-dependent instead
-        # of commutative
+        # turn off only split beams with NAND, and apply the splits with OR
         beam &= ~splitter_mask
         beam |= or_mask
 
-        # find the difference between the XOR and AND-NOT results, which are
-        # the unused splitters
-        unused ^= beam
-
-        # count the total splitters - unused splitters
-        splits += splitter_mask.bit_count() - unused.bit_count()
-
         print(
-            f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam)}  unused: {dbg(unused)}"
+            f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam)}"
         )
 
     return splits
