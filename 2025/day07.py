@@ -19,47 +19,44 @@ def solve(input: str, count_paths: bool = False) -> int:
     beam = int(lines.pop(0), 2)
     width = len(lines[0])
 
-    splits = 0
-    # For part 2: track the number of paths at each position
-    paths = [0] * width
-    # Initialize starting position with 1 path
-    for i, bit in enumerate(bitfield(beam, width)):
-        if bit:
-            paths[i] = 1
+    total_splits = 0
+    total_paths = bitfield(beam, width)
 
     for line in lines:
-        # splitters act as XOR on the beam index
-        splitter_mask = int(line, 2)
+        splitters = int(line, 2)
 
         # find the active splitters and count only them
-        splitter_mask &= beam
-        splits += splitter_mask.bit_count()
+        splitters &= beam
+        total_splits += splitters.bit_count()
 
         # find positions of the new paths of the beam
-        split_left = splitter_mask << 1
-        split_right = splitter_mask >> 1
+        split_left = splitters << 1
+        split_right = splitters >> 1
 
         # turn off only split beams with NAND
-        unsplit = beam & ~splitter_mask
+        unsplit = beam & ~splitters
         # combine all valid beams with OR
         beam = unsplit | split_left | split_right
 
         if count_paths:
             new_paths = [0] * width
+            u = bitfield(unsplit, width)
+            l = bitfield(split_left, width)
+            r = bitfield(split_right, width)
 
-            for i, bit in enumerate(bitfield(unsplit, width)):
-                if bit:
-                    new_paths[i] += paths[i]
+            # since we're tracing paths, we need to grab the previous count
+            # from the proper location prior to shift. for unsplit there is no
+            # offset, but for left and right, they are (counterintuitively) +1
+            # and -1, since that is the offset needed to "undo" the shift
+            for i in range(0, width):
+                if u[i]:
+                    new_paths[i] += total_paths[i]
+                if l[i]:
+                    new_paths[i] += total_paths[i + 1]
+                if r[i]:
+                    new_paths[i] += total_paths[i - 1]
 
-            for i, bit in enumerate(bitfield(split_left, width)):
-                if bit:
-                    new_paths[i] += paths[i + 1]
-
-            for i, bit in enumerate(bitfield(split_right, width)):
-                if bit:
-                    new_paths[i] += paths[i - 1]
-
-            paths = new_paths
+            total_paths = new_paths
 
         # print(f"split: {dbg(splitter_mask, width, "^")}  ", end="")
         # print(f"beams: {dbg(or_mask, width)}  ", end="")
@@ -67,8 +64,8 @@ def solve(input: str, count_paths: bool = False) -> int:
         # print(f"final: {dbg(beam, width)}  ", end="")
 
     if count_paths:
-        return sum(paths)
-    return splits
+        return sum(total_paths)
+    return total_splits
 
 
 class Test(unittest.TestCase):
