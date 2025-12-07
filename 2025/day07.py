@@ -6,7 +6,7 @@ def dbg(input: int, size: int, char: str = "|") -> str:
 
 
 def bitfield(n: int, size: int) -> list[int]:
-    return [int(c) for c in f"{n:>0{size}b}"]
+    return [(n >> i) & 1 for i in reversed(range(size))]
 
 
 def solve(input: str, count_paths: bool = False) -> int:
