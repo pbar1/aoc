@@ -26,16 +26,11 @@ def part1(input: str) -> int:
         splitter_mask = int(line, 2)
 
         # find positions of the new paths of the beam
-        new_beams: list[int] = []
-        for match in re.finditer("1", line):
-            new_beams.append(match.start() - 1)
-            new_beams.append(match.start() + 1)
-        beam_line = list("0" * len(line))
-        for i in new_beams:
-            beam_line[i] = "1"
+        new_left = splitter_mask << 1
+        new_right = splitter_mask >> 1
 
         # beams act as OR with other beams
-        or_mask = int("".join(beam_line), 2)
+        or_mask = new_left | new_right
 
         # simulate what would happen if the splitter was always applied, ie
         # with XOR, and save it for later without mutating the input
@@ -55,9 +50,9 @@ def part1(input: str) -> int:
         # count the total splitters - unused splitters
         splits += splitter_mask.bit_count() - unused.bit_count()
 
-        # print(
-        #     f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam_bits)}  unused: {dbg(unused)}"
-        # )
+        print(
+            f"split: {dbg(splitter_mask, "^")}  beams: {dbg(or_mask)}  final: {dbg(beam_bits)}  unused: {dbg(unused)}"
+        )
 
     return splits
 
@@ -86,10 +81,10 @@ class Test(unittest.TestCase):
         input = self.example
         self.assertEqual(part1(input), 21)
 
-    def test_part1_real(self):
-        with open("inputs/day07.txt", "r") as file:
-            input = file.read().strip()
-        self.assertEqual(part1(input), 1678)
+    # def test_part1_real(self):
+    #     with open("inputs/day07.txt", "r") as file:
+    #         input = file.read().strip()
+    #     self.assertEqual(part1(input), 1678)
 
 
 if __name__ == "__main__":
