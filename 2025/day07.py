@@ -20,7 +20,12 @@ def solve(input: str, count_paths: bool = False) -> int:
     width = len(lines[0])
 
     splits = 0
-    position_hits = [0] * width
+    # For part 2: track the number of paths at each position
+    paths = [0] * width
+    # Initialize starting position with 1 path
+    for i, bit in enumerate(bitfield(beam, width)):
+        if bit:
+            paths[i] = 1
 
     for line in lines:
         # splitters act as XOR on the beam index
@@ -31,25 +36,30 @@ def solve(input: str, count_paths: bool = False) -> int:
         splits += splitter_mask.bit_count()
 
         # find positions of the new paths of the beam
-        new_left = splitter_mask << 1
-        new_right = splitter_mask >> 1
+        split_left = splitter_mask << 1
+        split_right = splitter_mask >> 1
 
-        # accumulate unique hits into a position by counting its hits for both
-        # left and right splits
-        for i, bit in enumerate(bitfield(new_left, width)):
-            position_hits[i] += bit
-        for i, bit in enumerate(bitfield(new_right, width)):
-            position_hits[i] += bit
+        # turn off only split beams with NAND
+        unsplit = beam & ~splitter_mask
+        # combine all valid beams with OR
+        beam = unsplit | split_left | split_right
 
-        # print(position_hits)
+        if count_paths:
+            new_paths = [0] * width
 
-        # beams act as OR with other beams
-        or_mask = new_left | new_right
+            for i, bit in enumerate(bitfield(unsplit, width)):
+                if bit:
+                    new_paths[i] += paths[i]
 
-        # turn off only split beams with NAND, and apply the splits with OR
-        beam &= ~splitter_mask
-        unsplit = beam
-        beam |= or_mask
+            for i, bit in enumerate(bitfield(split_left, width)):
+                if bit:
+                    new_paths[i] += paths[i + 1]
+
+            for i, bit in enumerate(bitfield(split_right, width)):
+                if bit:
+                    new_paths[i] += paths[i - 1]
+
+            paths = new_paths
 
         # print(f"split: {dbg(splitter_mask, width, "^")}  ", end="")
         # print(f"beams: {dbg(or_mask, width)}  ", end="")
@@ -57,7 +67,7 @@ def solve(input: str, count_paths: bool = False) -> int:
         # print(f"final: {dbg(beam, width)}  ", end="")
 
     if count_paths:
-        return sum(position_hits)
+        return sum(paths)
     return splits
 
 
@@ -97,7 +107,7 @@ class Test(unittest.TestCase):
     def test_part2_real(self):
         with open("inputs/day07.txt", "r") as file:
             input = file.read().strip()
-        self.assertEqual(solve(input, count_paths=True), -1)  # 3354 is too low
+        self.assertEqual(solve(input, count_paths=True), 357525737893560)
 
 
 if __name__ == "__main__":
