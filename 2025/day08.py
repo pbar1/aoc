@@ -48,7 +48,7 @@ class Test(unittest.TestCase):
 
     def test_part1_example(self):
         points = parse_input(self.example)
-        self.assertEqual(solve(points), -1)
+        self.assertEqual(solve(points), 40)
 
     def test_part1_real(self):
         with open("inputs/day08.txt", "r") as file:
