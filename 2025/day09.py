@@ -24,6 +24,22 @@ def solve_part1(input: list[tuple[int, int]]) -> int:
 
 
 def solve_part2(input: list[tuple[int, int]]) -> int:
+    max_x = -1
+    max_y = -1
+
+    for x, y in input:
+        max_x = max(x, max_x)
+        max_y = max(y, max_y)
+
+    print("\n")
+
+    grid = ["." * (max_x + 1)] * (max_y + 1)
+    for x, y in input:
+        grid[y] = grid[y][:x] + "#" + grid[y][x + 1 :]
+
+    print("\n".join(grid))
+    print()
+
     return -1
 
 
