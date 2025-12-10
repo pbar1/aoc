@@ -10,7 +10,17 @@ def parse_input(input: str) -> list[tuple[int, int]]:
 
 
 def solve_part1(input: list[tuple[int, int]]) -> int:
-    return -1
+    max_area = -1
+
+    for a_x, a_y in input:
+        for b_x, b_y in input:
+            if a_x == b_x or a_y == b_y:
+                continue
+            x = abs(a_x - b_x) + 1
+            y = abs(a_y - b_y) + 1
+            max_area = max(x * y, max_area)
+
+    return max_area
 
 
 def solve_part2(input: list[tuple[int, int]]) -> int:
