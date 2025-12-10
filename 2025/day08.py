@@ -86,6 +86,54 @@ def solve(points: list[Point], top: int) -> int:
     return total
 
 
+# NOTE: This was not solved; used AI to unblock
+def solve_part2(points: list[Point]) -> int:
+    """Connect junction boxes until they're all in one circuit.
+    Return the product of X coordinates of the last two boxes connected."""
+
+    # Generate all segments sorted by distance
+    segments: list[Tuple[float, Point, Point]] = []
+    for a in points:
+        for b in points:
+            if a == b:
+                continue
+            d = distance(a, b)
+            segments.append((d, a, b))
+    segments.sort()
+    # Remove duplicates (each pair appears twice)
+    segments = [segment for i, segment in enumerate(segments) if i % 2 == 0]
+
+    # Union-Find data structure for tracking connected components
+    parent: dict[Point, Point] = {p: p for p in points}
+
+    def find(p: Point) -> Point:
+        if parent[p] != p:
+            parent[p] = find(parent[p])  # Path compression
+        return parent[p]
+
+    def union(a: Point, b: Point) -> bool:
+        """Union two points. Returns True if they were in different components."""
+        root_a = find(a)
+        root_b = find(b)
+        if root_a == root_b:
+            return False
+        parent[root_a] = root_b
+        return True
+
+    def count_components() -> int:
+        """Count the number of distinct connected components."""
+        return len(set(find(p) for p in points))
+
+    # Connect pairs until all are in one circuit
+    for _, a, b in segments:
+        if union(a, b):
+            # Check if we've unified everything
+            if count_components() == 1:
+                return a.x * b.x
+
+    return -1  # Should never reach here if input is valid
+
+
 class Test(unittest.TestCase):
     example = """
 162,817,812
@@ -131,12 +179,12 @@ class Test(unittest.TestCase):
 
     def test_part2_example(self):
         points = parse_input(self.example)
-        self.assertEqual(25272, 25272)
+        self.assertEqual(solve_part2(points), 25272)
 
     def test_part2_real(self):
         with open("inputs/day08.txt", "r") as file:
             points = parse_input(file.read().strip())
-        self.assertEqual(-1, -1)
+        self.assertEqual(solve_part2(points), 1026594680)
 
 
 if __name__ == "__main__":
