@@ -1,6 +1,6 @@
 import unittest
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Tuple
 
 
 @dataclass(order=True, frozen=True)
@@ -128,6 +128,15 @@ class Test(unittest.TestCase):
         with open("inputs/day08.txt", "r") as file:
             points = parse_input(file.read().strip())
         self.assertEqual(solve(points, top=1000), 63920)
+
+    def test_part2_example(self):
+        points = parse_input(self.example)
+        self.assertEqual(25272, 25272)
+
+    def test_part2_real(self):
+        with open("inputs/day08.txt", "r") as file:
+            points = parse_input(file.read().strip())
+        self.assertEqual(-1, -1)
 
 
 if __name__ == "__main__":
