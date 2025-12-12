@@ -31,14 +31,14 @@ def solve_part2(input: list[tuple[int, int]]) -> int:
         max_x = max(x, max_x)
         max_y = max(y, max_y)
 
-    print("\n")
+    # print("\n")
 
     grid = ["." * (max_x + 1)] * (max_y + 1)
     for x, y in input:
         grid[y] = grid[y][:x] + "#" + grid[y][x + 1 :]
 
-    print("\n".join(grid))
-    print()
+    # print("\n".join(grid))
+    # print()
 
     return -1
 
@@ -62,16 +62,16 @@ class Test(unittest.TestCase):
     def test_part1_real(self):
         with open("inputs/day09.txt", "r") as file:
             input = parse_input(file.read().strip())
-        self.assertEqual(solve_part1(input), -1)
+        self.assertEqual(solve_part1(input), 4781377701)
 
-    def test_part2_example(self):
-        input = parse_input(self.example)
-        self.assertEqual(solve_part2(input), -1)
+    # def test_part2_example(self):
+    #     input = parse_input(self.example)
+    #     self.assertEqual(solve_part2(input), -1)
 
-    def test_part2_real(self):
-        with open("inputs/day09.txt", "r") as file:
-            input = parse_input(file.read().strip())
-        self.assertEqual(solve_part2(input), -1)
+    # def test_part2_real(self):
+    #     with open("inputs/day09.txt", "r") as file:
+    #         input = parse_input(file.read().strip())
+    #     self.assertEqual(solve_part2(input), -1)
 
 
 if __name__ == "__main__":
