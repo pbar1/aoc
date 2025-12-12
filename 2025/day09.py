@@ -31,14 +31,58 @@ def solve_part2(input: list[tuple[int, int]]) -> int:
         max_x = max(x, max_x)
         max_y = max(y, max_y)
 
-    # print("\n")
+    boundary: set[tuple[int, int]] = set()
+    for i in range(0, len(input)):
+        if i == len(input) - 1:
+            j = 0
+        else:
+            j = i + 1
+        cur_x, cur_y = input[i]
+        nxt_x, nxt_y = input[j]
 
-    grid = ["." * (max_x + 1)] * (max_y + 1)
-    for x, y in input:
-        grid[y] = grid[y][:x] + "#" + grid[y][x + 1 :]
+        # same x-axis, move vertically
+        if cur_x == nxt_x:
+            lo_y = min(cur_y, nxt_y)
+            hi_y = max(cur_y, nxt_y)
+            for y in range(lo_y, hi_y + 1):
+                boundary.add((cur_x, y))
 
-    # print("\n".join(grid))
-    # print()
+        # same y-axis, move horizontally
+        if cur_y == nxt_y:
+            lo_x = min(cur_x, nxt_x)
+            hi_x = max(cur_x, nxt_x)
+            for x in range(lo_x, hi_x + 1):
+                boundary.add((x, cur_y))
+
+    print(f"boundary points: {len(boundary)}")
+
+    # scan across each row for min, max x
+    minmax_xs: dict[int, tuple[int, int]] = dict()
+    for y in range(0, max_y + 1):
+        lo_x = -1
+        hi_x = -1
+        for x in range(0, max_x + 1):
+            if (x, y) in boundary:
+                if lo_x == -1:
+                    lo_x = x
+                hi_x = x
+        minmax_xs[y] = (lo_x, hi_x)
+
+    # print(minmax_xs)
+
+    # scan across each col for min, max y
+    minmax_ys: dict[int, tuple[int, int]] = dict()
+    for x in range(0, max_x + 1):
+        lo_y = -1
+        hi_y = -1
+        for y in range(0, max_y + 1):
+            if (x, y) in boundary:
+                if lo_y == -1:
+                    lo_y = y
+                hi_y = y
+        minmax_ys[x] = (lo_y, hi_y)
+
+    # print(minmax_ys)
 
     return -1
 
@@ -64,14 +108,14 @@ class Test(unittest.TestCase):
             input = parse_input(file.read().strip())
         self.assertEqual(solve_part1(input), 4781377701)
 
-    # def test_part2_example(self):
-    #     input = parse_input(self.example)
-    #     self.assertEqual(solve_part2(input), -1)
+    def test_part2_example(self):
+        input = parse_input(self.example)
+        self.assertEqual(solve_part2(input), -1)
 
-    # def test_part2_real(self):
-    #     with open("inputs/day09.txt", "r") as file:
-    #         input = parse_input(file.read().strip())
-    #     self.assertEqual(solve_part2(input), -1)
+    def test_part2_real(self):
+        with open("inputs/day09.txt", "r") as file:
+            input = parse_input(file.read().strip())
+        self.assertEqual(solve_part2(input), -1)
 
 
 if __name__ == "__main__":
